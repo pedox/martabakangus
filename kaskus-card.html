@@ -1,0 +1,272 @@
+<link href="http://netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
+<style type="text/css">
+	body{
+		margin: 0px;
+		font-family: sans-serif;
+	}
+	p{
+		margin: 0px;
+	}
+	#content{
+		margin: 10px;
+		box-shadow: 0px 1px 3px rgba(51, 51, 51, 0.2);
+		display: none;
+	}
+	a{
+		color: #0976BC;
+	}
+	header{
+		background: #f5f5f5;
+		position: relative;
+	}
+	header h1{
+		width: 4.5em;
+		margin: 0;
+	}
+	header h1 img{
+		width: 100%;
+		margin: 10px;
+	}
+	header >a{
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		background: #FCA21B;
+		bottom: 5px;
+		padding: 10px 20px;
+		text-decoration: none;
+		color: white;
+		font-weight: bold;
+		-webkit-transition: all 0.5s;
+	}
+	header >a:hover{
+		background: #E49217;
+	}
+	.stripline{
+		background: #1484CE;
+		color: #fff;
+		font-weight: bold;
+		padding: 3px 10px;
+		font-size: 13px;
+		position: relative;
+	}
+	.stripline time{
+		position: absolute;
+		right: 10px;
+		top: 5px;
+		font-size: 10px;
+	}
+	.vcard{
+		overflow: hidden;
+		background: #F2F7FA;
+		border-bottom: 1px solid #D9DFE2;
+		padding: 10px;
+	}
+	.vcard figure{
+		float: left;
+		margin: 0;
+		width: 6em;
+	}
+	.vcard figure img{
+		width: 100%;
+	}
+	.vcard .detail{
+		float: left;
+		margin-left: 10px;
+		font-size: 0.8em;
+		color: #333;
+	}
+	.vcard .detail a{
+		font-weight: bold;
+		text-decoration: none;
+	}
+	.vcard .detail p{
+		margin-bottom: 3px;
+	}
+	.vcard .detail .static{
+		font-size: 0.8em;
+		float: left;
+		border-top: 1px solid #D9DFE2;
+		margin-top: 0px;
+		padding-top: 5px;
+	}
+	.vcard .detail .static span{
+		display: inline-block;
+		width: 35px;
+	}
+	.vcard .cendol{
+		float: right;
+	}
+	.vcard .cendol ul{
+		margin: 0px;
+	}
+	.vcard .cendol ul.bata li
+	{
+		background: #E63817;
+	}
+	.vcard .cendol ul.cendol-gan li
+	{
+		background: #A3E617;
+	}
+	.vcard .cendol ul li{
+		display: block;
+		width: 8px;
+		height: 10px;
+		float: left;
+		margin: 0px 2px;
+	}
+	.content{
+		padding: 20px;
+		font-size: 13px;
+		background: #fff;
+	}
+	#post_title a{
+		color: #fff;
+		text-decoration: none;
+	}
+</style>
+<div id="content">
+	<header>
+		<h1>
+			<a href="#"><img src="home-logo.png"/></a>
+		</h1>
+		<a href="#" id="quote-src"><i class="icon-quote-left"></i> Quote</a>
+	</header>
+	<div class="stripline">
+		<p id="post_title"><a href="#">%title%</a></p>
+		<time id="post_time">%date%</time>
+	</div>
+	<div class="vcard">
+		<figure>
+			<img id="avatar_src" src="%src%">
+		</figure>
+		<div class="detail">
+			<p id="username"><a href="">%username%</a></p>
+			<p id="slug">%role%</p>
+			<div class="static">
+			</div>
+		</div>
+		<div class="cendol">
+			<ul title="% akan menjadi terkenal" class="">
+			</ul>
+		</div>
+	</div>
+	<div class="content">
+	</div>
+</div>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+	
+	if(window.location.hash)
+	{
+		var hash = window.location.hash;
+
+		var jadi = hash.split('#');
+
+		var yql = encodeURIComponent('http://www.kaskus.co.id/show_post/'+jadi[1]);
+
+		//By Using YQL
+		$.ajax({
+		  url: "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22"+yql+"%22%20and%0A%20%20%20%20%20%20xpath%3D'%2F%2Fdiv%5B%40id%3D%22main%22%5D%2Fdiv%5B%40class%3D%22row%22%5D'&diagnostics=false",
+		  cache: true,
+		  dataType: "html"
+		}).done(function( data ) {
+		  addToKaskus(data);
+		});
+	}
+
+	//Kaskus Single Post Grabber
+
+	function addToKaskus(data)
+	{
+		var url = "http://kaskus.co.id"
+		var hasil = {}
+
+		//Header Of Content
+		var header 				= $(data).find('.row .breadcrumbs a');
+		//Main of Content
+		var main 				= $(data).find('.row:eq(1) .col .row .col .row .col');
+		//author container
+		var author 				= $(main).find('.vcard');
+
+		//post detail
+		hasil.judul 			= header.html();
+		hasil.link 				= url + header.attr('href');
+		hasil.date_post			= $(main).find('>p').html();
+		hasil.post_id 			= $(main).find('.entry-head .permalink a strong').html();
+
+		//user detail
+		hasil.img_url 			= $(author).find('img.photo').attr('src');
+		hasil.username			= $(author).find('.user-details >a').html();
+		hasil.username_href		= url + $(author).find('.user-details >a').attr('href');
+		hasil.role				= $(author).find('.title p').html();
+		hasil.user_id			= $(author).find('.meta div:eq(0) p').html();
+		hasil.join_date			= $(author).find('.meta div:eq(1) p').html();
+		hasil.total_post		= $(author).find('.meta div:eq(2) p').html();
+		//cendol
+		hasil.cendol			= $(author).find('.cendol img').length;
+		hasil.cendol_desc		= $(author).find('.cendol').attr('title');
+		if($(author).find('.cendol img').attr('src') == "http://kkcdn-static.kaskus.co.id/themes_2.0/img/icon/reputation_pos.gif")
+		{
+			hasil.cendol_type = 1;
+		}
+		else
+		{
+			hasil.cendol_type = 0;
+		}
+
+		//Online Status
+		if($(author).find('.control ul li:eq(0) a img').attr('src') == "http://kkcdn-static.kaskus.co.id/themes_2.0/img/icon/status_online.png")
+		{
+			hasil.online = 1;
+		}
+		else
+		{
+			hasil.online = 0;
+		}
+
+		//content
+		hasil.content = $(main).find('.entry');
+		//quote url (For reply)
+		hasil.quote	= url + $(main).find('.user-tools a').attr('href');
+
+
+		//==================================================================
+
+		//console.log(hasil);
+
+		//render
+		$("#quote-src").attr('href',hasil.quote);
+		$("#post_title a").html(hasil.judul).attr('href',hasil.link);
+		$("#post_time").html(hasil.date_post);
+		$("#avatar_src").attr('src', hasil.img_url);
+		$("#username a").attr('href', hasil.username_href).html(hasil.username);
+		$("#slug").html(hasil.role);
+
+		$(".static").html('<p><span>Post</span>'+hasil.total_post+'</p>');
+		$(".static").append('<p><span>Join</span>'+hasil.join_date+'</p>');
+		$(".static").append('<p><span>UserID</span>'+hasil.user_id+'</p>');
+
+		if(hasil.cendol_type = 1)
+		{
+			var cendolnya = "cendol-gan";
+		}
+		else
+		{
+			var cendolnya = "bata";
+		}
+		$('.cendol ul').addClass(cendolnya).attr('title', hasil.cendol_desc);
+
+		for (var i=0;i<hasil.cendol;i++)
+		{
+			$('.cendol ul').append('<li></li>');
+		}
+
+		$(".content").html(hasil.content);
+		$("#content").fadeIn();
+		$("header h1 a img").attr('src','http://kkcdn-static.kaskus.co.id/themes_2.0/img/home-logo.png');
+	}
+
+	function spoiler(b){if(b.value=="Show"){$(".content_"+$(b).attr("class")).slideDown(0);b.innerHTML="";b.value="Hide"}else{$(".content_"+$(b).attr("class")).slideUp(0);b.innerHTML="";b.value="Show"}}
+</script>
