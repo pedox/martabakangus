@@ -3,32 +3,42 @@
     <head>
         <meta charset="utf-8">
         <title>Martabak Angus</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="stylesheets/screen.css" charset="utf-8">
+        <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.min.css" charset="utf-8">
+        <link rel="stylesheet" href="bower_components/animate.css/animate.min.css">
     </head>
     <body ng-app="martabak">
         <div class="container main-container">
             <div class="col-sm-4">
-                <div id="master-head">
-                    <img src="img/martabak.svg" alt="" class="martabak-logo">
+                <div id="master-head" ng-controller="masterHead">
+                    <div class="top-picture">
+                        <img src="img/martabak.svg" alt="" class="animate-img" ng-show="logo == 1">
+                        <img src="https://s.gravatar.com/avatar/ff6aa2c241372b7aa5477dab47440062?s=200" class="animate-img" ng-show="logo == 2">
+                    </div>
+
                     <h1 class="title">Martabak Angus</h1>
                 </div>
                 <nav id="main-nav">
                     <ul>
-                        <li><a href="#/">About Me</a></li>
-                        <li><a href="#/can-do">What can i do ?</a></li>
-                        <li><a href="#/works">Works</a></li>
-                        <li><a href="#/contact">Contact</a></li>
+                        <li ng-class="{'active':activeMenu == 0}"><a ng-click="set(0)" href="#/">About Me</a></li>
+                        <li ng-class="{'active':activeMenu == 1}"><a ng-click="set(1)" href="#/can-do">What can i do ?</a></li>
+                        <li ng-class="{'active':activeMenu == 2}"><a ng-click="set(2)" href="#/works">Works</a></li>
+                        <li ng-class="{'active':activeMenu == 3}"><a ng-click="set(3)" href="#/tools">Tools</a></li>
+                        <li ng-class="{'active':activeMenu == 4}"><a ng-click="set(4)" href="#/contact">Contact</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-sm-8">
                 <div class="content-right">
-                    <div ng-view></div>
+                    <div ng-view class="animate-frame"></div>
                 </div>
             </div>
         </div>
         <script src="bower_components/angular/angular.min.js"></script>
         <script src="bower_components/angular-route/angular-route.min.js"></script>
+        <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+        <script src="bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
         <script src="js/index.js"></script>
     </body>
 </html>
